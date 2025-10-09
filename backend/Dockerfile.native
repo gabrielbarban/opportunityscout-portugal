@@ -1,0 +1,23 @@
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build
+
+WORKDIR /app
+
+COPY --chown=quarkus:quarkus mvnw /app/mvnw
+COPY --chown=quarkus:quarkus .mvn /app/.mvn
+COPY --chown=quarkus:quarkus pom.xml /app/
+RUN ./mvnw dependency:go-offline -B
+
+COPY src /app/src
+RUN ./mvnw package -Dnative -DskipTests
+
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.3
+
+WORKDIR /app
+
+COPY --from=build /app/target/*-runner /app/application
+
+EXPOSE 8080
+
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
