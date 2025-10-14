@@ -5,9 +5,10 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Users, Briefcase, Radar } from 'lucide-react';
 import Button from './ui/Button';
+import PlanBadge from './ui/PlanBadge';
 
 export default function Navbar() {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, planName } = useAuth();
   const pathname = usePathname();
 
   if (!user) return null;
@@ -55,9 +56,12 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="text-sm">
+            <div className="text-sm text-right">
               <p className="text-foreground font-medium">{user.nome}</p>
-              <p className="text-muted-foreground text-xs">{user.role}</p>
+              <div className="flex items-center justify-end space-x-2 -mt-0.5">
+                <p className="text-muted-foreground text-xs">{user.role}</p>
+                <PlanBadge plan={planName} size="sm" showIcon />
+              </div>
             </div>
             <Button variant="secondary" onClick={logout} className="flex items-center space-x-2">
               <LogOut size={18} />

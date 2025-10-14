@@ -8,6 +8,7 @@ interface User {
   email: string;
   nome: string;
   role: string;
+  plano?: string; // Novo: nome do plano
 }
 
 interface AuthContextType {
@@ -15,6 +16,10 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAdmin: boolean;
+  isPremium: boolean; // Novo
+  isFree: boolean; // Novo
+  isEnterprise: boolean; // Novo
+  planName: string; // Novo
   loading: boolean;
 }
 
@@ -30,7 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedUser = localStorage.getItem('user');
     
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+      const userData = JSON.parse(storedUser);
+      setUser(userData);
     }
     setLoading(false);
   }, []);
@@ -38,6 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const response = await api.post('/auth/login', { email, password });
     const { token, ...userData } = response.data;
+    
+    // Adicionar plano padrão se não vier
+    if (!userData.plano) {
+      userData.plano = 'FREE';
+    }
     
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
@@ -54,9 +65,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const isAdmin = user?.role === 'ADMIN';
+  const planName = user?.plano || 'FREE';
+  const isPremium = planName === 'PREMIUM' || planName === 'ENTERPRISE';
+  const isFree = planName === 'FREE';
+  const isEnterprise = planName === 'ENTERPRISE';
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAdmin, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      isAdmin, 
+      isPremium,
+      isFree,
+      isEnterprise,
+      planName,
+      loading 
+    }}>
       {children}
     </AuthContext.Provider>
   );
