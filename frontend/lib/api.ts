@@ -1,7 +1,22 @@
 import axios from 'axios';
 
+// Detectar se está acessando por IP local ou localhost
+const getBaseURL = () => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    
+    // Se acessando por IP (ex: 192.168.1.73), usar o mesmo IP para API
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      return `http://${hostname}:8080/api`;
+    }
+  }
+  
+  // Fallback para localhost
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+};
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
