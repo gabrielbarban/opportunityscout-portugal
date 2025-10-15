@@ -5,4 +5,5 @@ public class UsuarioRequest {
     public String password;
     public String nome;
     public String role;
+    public String telefone;
 }

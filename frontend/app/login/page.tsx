@@ -6,6 +6,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { Radar } from 'lucide-react';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,7 +40,9 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold text-foreground">OpportunityScout</h1>
           <p className="text-primary font-medium mt-1">Portugal</p>
-          <p className="text-muted-foreground mt-3 text-sm">Monitoramento Automático de Oportunidades de Negócio</p>
+          <p className="text-muted-foreground mt-3 text-sm">
+            Centralize oportunidades de financiamento público em Portugal
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,8 +76,12 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>Credenciais padrão:</p>
-          <p className="font-mono">admin@oportunidades.com / admin123</p>
+          <p>
+            Não tem uma conta?{' '}
+            <Link href="/cadastro" className="text-primary hover:underline font-medium">
+              Cadastre-se grátis
+            </Link>
+          </p>
         </div>
       </Card>
     </div>

@@ -1,6 +1,7 @@
 package com.oportunidades.config;
 
 import com.oportunidades.entity.Usuario;
+import com.oportunidades.repository.PlanoRepository;
 import com.oportunidades.repository.UsuarioRepository;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.logging.Log;
@@ -16,6 +17,9 @@ public class StartupBean {
     @Inject
     UsuarioRepository usuarioRepository;
 
+    @Inject
+    PlanoRepository planoRepository;
+
     @Transactional
     public void onStart(@Observes StartupEvent ev) {
         Log.info("Iniciando aplicação...");
@@ -26,6 +30,8 @@ public class StartupBean {
             admin.password = BcryptUtil.bcryptHash("admin123");
             admin.nome = "Administrador";
             admin.role = "ADMIN";
+            admin.plano = planoRepository.findFree();
+            admin.ipCriacao = "127.0.0.1";
             usuarioRepository.persist(admin);
             
             Log.info("Usuário admin criado: admin@oportunidades.com / admin123");

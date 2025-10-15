@@ -8,7 +8,8 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import PlanBadge from '@/components/ui/PlanBadge';
 import api from '@/lib/api';
-import { Check, X, Zap, Crown, Gift } from 'lucide-react';
+import { Check, X, Zap, Crown, Gift, Radar, Github, Mail } from 'lucide-react';
+import Link from 'next/link';
 
 interface Plano {
   id: number;
@@ -57,12 +58,10 @@ export default function PricingPage() {
 
   const handleSelectPlan = (plano: Plano) => {
     if (plano.nome === 'FREE') {
-      router.push('/login');
+      router.push('/cadastro');
       return;
     }
     
-    // Por enquanto, só redireciona para oportunidades
-    // Na próxima etapa vamos integrar Stripe
     alert(`Em breve: Checkout para ${plano.nome} - ${periodo}`);
   };
 
@@ -144,11 +143,24 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {user && <Navbar />}
+    <div className="min-h-screen bg-background flex flex-col">
+      {user ? (
+        <Navbar />
+      ) : (
+        <div className="border-b border-border">
+          <div className="container mx-auto px-4 py-4">
+            <Link href="/" className="flex items-center space-x-2 w-fit">
+              <Radar size={28} className="text-primary" />
+              <div>
+                <div className="text-lg font-bold text-primary">OpportunityScout</div>
+                <div className="text-xs text-muted-foreground -mt-1">Portugal</div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
       
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
+      <div className="flex-1 container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Escolha o Plano Ideal
@@ -157,7 +169,6 @@ export default function PricingPage() {
             Não perca nenhuma oportunidade de financiamento em Portugal
           </p>
 
-          {/* Toggle Mensal/Anual */}
           <div className="flex items-center justify-center space-x-4">
             <button
               onClick={() => setPeriodo('mensal')}
@@ -185,11 +196,10 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* Cards de Planos */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {planos.map((plano) => {
-            const isPlanoPremium = plano.nome === 'FREE';
-            const isPlanoAtual = !!(user && planName === plano.nome); // CORRIGIDO: forçar boolean
+            const isPlanoPremium = false;
+            const isPlanoAtual = !!(user && planName === plano.nome);
             
             return (
               <Card 
@@ -200,7 +210,6 @@ export default function PricingPage() {
                     : 'border border-border'
                 }`}
               >
-                {/* Badge Recommended */}
                 {isPlanoPremium && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                     <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-bold flex items-center space-x-1">
@@ -210,7 +219,6 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                {/* Badge Plano Atual */}
                 {isPlanoAtual && (
                   <div className="absolute top-4 right-4">
                     <PlanBadge plan={plano.nome} size="sm" showIcon />
@@ -218,7 +226,6 @@ export default function PricingPage() {
                 )}
 
                 <div className="p-6">
-                  {/* Nome do Plano */}
                   <div className="flex items-center space-x-2 mb-2">
                     {plano.nome === 'FREE' && <Gift size={24} className="text-gray-400" />}
                     {plano.nome === 'PREMIUM' && <Zap size={24} className="text-primary" />}
@@ -226,12 +233,10 @@ export default function PricingPage() {
                     <h3 className="text-2xl font-bold text-foreground">{plano.nome}</h3>
                   </div>
 
-                  {/* Descrição */}
                   <p className="text-sm text-muted-foreground mb-6 h-12">
                     {plano.descricao}
                   </p>
 
-                  {/* Preço */}
                   <div className="mb-6">
                     <div className="flex items-baseline space-x-2">
                       <span className="text-4xl font-bold text-foreground">
@@ -251,7 +256,6 @@ export default function PricingPage() {
                     )}
                   </div>
 
-                  {/* Botão */}
                   <Button
                     onClick={() => handleSelectPlan(plano)}
                     variant={isPlanoPremium ? 'primary' : 'secondary'}
@@ -262,7 +266,6 @@ export default function PricingPage() {
                     {isPlanoAtual ? 'Plano Atual' : plano.nome === 'FREE' ? 'Começar Grátis' : 'Assinar Agora'}
                   </Button>
 
-                  {/* Features principais */}
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2 text-sm">
                       <Check size={16} className="text-primary" />
@@ -313,7 +316,6 @@ export default function PricingPage() {
           })}
         </div>
 
-        {/* Tabela Comparativa */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center text-foreground mb-8">
             Comparativo Completo
@@ -381,7 +383,6 @@ export default function PricingPage() {
           </Card>
         </div>
 
-        {/* FAQ */}
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-foreground mb-8">
             Perguntas Frequentes
@@ -425,6 +426,35 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
+
+      <footer className="border-t border-border mt-auto">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground space-y-2 md:space-y-0">
+            <div className="text-center md:text-left">
+              <p className="font-medium">Barban Softwares LTDA</p>
+              <p>Gabriel Barban</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <a 
+                href="https://github.com/gabrielbarban" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              >
+                <Github size={14} />
+                <span>GitHub</span>
+              </a>
+              <a 
+                href="mailto:softwaresbarban@gmail.com"
+                className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              >
+                <Mail size={14} />
+                <span>softwaresbarban@gmail.com</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

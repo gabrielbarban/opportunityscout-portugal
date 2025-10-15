@@ -1,0 +1,4 @@
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS criado_em TIMESTAMP DEFAULT NOW();
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS ip_criacao VARCHAR(50);
+
+UPDATE usuarios SET criado_em = NOW() WHERE criado_em IS NULL;
